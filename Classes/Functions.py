@@ -1,12 +1,12 @@
 import re
 
 from bs4 import BeautifulSoup
-from httpx import AsyncClient, Response
+from httpx import Client, Response
 
 from .Dataclasses import Pages, User
 
 
-def SetSessionHeaders(client: AsyncClient):
+def SetSessionHeaders(client: Client):
     client.headers
     client.headers["User-Agent"] = (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -37,8 +37,8 @@ def SearchGroupOne(pattern: str, text: str) -> str:
         return ""
 
 
-async def GetUser(client: AsyncClient) -> User:
-    personalAccountResponse = await client.get(Pages.personalAccount)
+def GetUser(client: Client) -> User:
+    personalAccountResponse = client.get(Pages.personalAccount)
     personalAccountResponse.raise_for_status()
     responseText = personalAccountResponse.text
     user = User()
@@ -52,10 +52,10 @@ async def GetUser(client: AsyncClient) -> User:
     return user
 
 
-async def Authorize(client: AsyncClient,
-                    email: str,
-                    password: str) -> bool:
-    loginPage = await client.get(Pages.login)
+def Authorize(client: Client,
+              email: str,
+              password: str) -> bool:
+    loginPage = client.get(Pages.login)
     loginPage.raise_for_status()
     requestVerificationToken = GetRequestVerificationToken(loginPage)
     client.headers["__RequestVerificationToken"] = requestVerificationToken
@@ -64,21 +64,21 @@ async def Authorize(client: AsyncClient,
         "Login": email,
         "Password": password
     }
-    loginResponse = await client.post(Pages.login, data=data)
+    loginResponse = client.post(Pages.login, data=data)
     loginResponse.raise_for_status()
     del client.headers["__RequestVerificationToken"]
     return True
 
 
-async def Logoff(client: AsyncClient) -> bool:
-    mainPage = await client.get(Pages.main)
+def Logoff(client: Client) -> bool:
+    mainPage = client.get(Pages.main)
     mainPage.raise_for_status()
     requestVerificationToken = GetRequestVerificationToken(mainPage)
     client.headers["__RequestVerificationToken"] = requestVerificationToken
     data = {
         "__RequestVerificationToken": requestVerificationToken
     }
-    logoffResponse = await client.post(Pages.logoff, data=data, allow_redirects=False)
+    logoffResponse = client.post(Pages.logoff, data=data, follow_redirects=False)
     if logoffResponse.status_code != 302:
         print("Error! Can't log off!"
               f" Error code: {logoffResponse.status_code}")

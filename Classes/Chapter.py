@@ -2,7 +2,7 @@ import re
 from typing import List, Optional
 
 from bs4 import BeautifulSoup
-from httpx import AsyncClient
+from httpx import Client
 
 from .Dataclasses import ChapterHeader, Pages, User
 
@@ -11,19 +11,18 @@ class Chapter:
     header: Optional[ChapterHeader]
     paragraphs: List[str]
     userId: int
-    client: AsyncClient
+    client: Client
 
     def __init__(self,
                  header: ChapterHeader,
-                 client: AsyncClient = None,
+                 client: Client,
                  user: User = None):
-        self.client = client if client else AsyncClient()
+        self.client = client
         self.userId = user.userId if user else -1
         self.header = header
 
-    async def GetChapterFromUrl(self,
-                                url: str):
-        chapterResponse = await self.client.get(url)
+    def GetChapterFromUrl(self, url: str):
+        chapterResponse = self.client.get(url)
         chapterResponse.raise_for_status()
         data = chapterResponse.json()
         if data["isSuccessful"] is True:
@@ -49,8 +48,8 @@ class Chapter:
                           else ".\n")
 
     @staticmethod
-    async def GetUserId(client: AsyncClient) -> int:
-        personalAccountResponse = await client.get(Pages.personalAccount)
+    def GetUserId(client: Client) -> int:
+        personalAccountResponse = client.get(Pages.personalAccount)
         personalAccountResponse.raise_for_status()
         responseText = personalAccountResponse.text
         searchResult = re.search(r"ga\('set', 'userId', '(\d*)'\)",
