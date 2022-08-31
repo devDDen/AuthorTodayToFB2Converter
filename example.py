@@ -6,22 +6,35 @@ from FB2.Author import Author
 from httpx import Client, Timeout
 from FB2 import FictionBook2
 
+from os import path, makedirs
+from sys import argv
+
 from Classes.Book import Book
 from Classes.Dataclasses import Pages
-from Classes.Functions import Authorize, Logoff, SetSessionHeaders
+from Classes.Functions import Authorize, Logoff, SetSessionHeaders, RemoveInvalidFilenameCharacters
 
 
 if __name__ == "__main__":
+    fileDir = path.dirname(argv[0])
+    outputDir = fileDir + "/Output"
+    makedirs(outputDir, exist_ok = True)
+
     client = Client()
     client._timeout = Timeout(3)
     client.base_url = Pages.main
     SetSessionHeaders(client)
+    emailPath = fileDir + "/PrivateConfig/email.txt"
+    passwordPath = fileDir + "/PrivateConfig/password.txt"
+    authorized = False
+    if (path.exists(emailPath)
+        and path.exists(passwordPath)):
+        with open(emailPath) as f:
+            email = f.readline()
+        with open(passwordPath) as f:
+            password = f.readline()
+        authorized = Authorize(client, email, password)
     t = time()
-    with open("./PrivateConfig/mainPassword.txt") as f:
-        password = f.readlines()[0]
-    with open("./PrivateConfig/mail.ru-email.txt") as f:
-        email = f.readlines()[0]
-    if Authorize(client, email, password):
+    if authorized:
         print(f"Authorized as {email}")
         book: Book = Book(client)
         book.GetBookFromUrl("/work/40323")
@@ -61,6 +74,8 @@ if __name__ == "__main__":
                 book.chapters,
             )
         )
-        fb2.write(f"./Output/{fb2.titleInfo.title}.fb2")
+        fb2.write(f"{outputDir}/{RemoveInvalidFilenameCharacters(fb2.titleInfo.title)}.fb2")
         Logoff(client)
+    else:
+        print("You are not authorized")
     print(f"All requests took {time() - t} seconds.")

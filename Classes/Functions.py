@@ -84,3 +84,6 @@ def Logoff(client: Client) -> bool:
               f" Error code: {logoffResponse.status_code}")
         return False
     return True
+
+def RemoveInvalidFilenameCharacters(filename: str) -> str:
+    return re.sub('[<>/\\\:"|?*]', '', filename)
