@@ -16,13 +16,13 @@ class Book:
         self.client = client
         self.header = BookHeader()
 
-    def GetBookFromUrl(self, url: str):
+    def GetBookFromUrl(self, authorized: bool, url: str):
         self.header.GetBookHeaderFromUrl(url, self.client)
-        self.GetBookChapters()
+        self.GetBookChapters(authorized)
 
-    def GetBookChapters(self) -> List[Chapter]:
+    def GetBookChapters(self, authorized: bool) -> List[Chapter]:
         self.chapters = []
-        user = User("", "", Chapter.GetUserId(self.client))
+        user = User("", "", Chapter.GetUserId(self.client)) if authorized else None
         if len(self.header.tableOfContents) > 1:
             self.getMultipleChapters(user)
         else:

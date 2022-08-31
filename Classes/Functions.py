@@ -21,12 +21,10 @@ def SetSessionHeaders(client: Client):
     client.headers["Sec-Fetch-Site"] = "same-origin"
     client.headers["Sec-Fetch-User"] = "?0"
 
-
 def GetRequestVerificationToken(response: Response) -> str:
     DOM: BeautifulSoup = BeautifulSoup(response.text, "html.parser")
     tokenInput = DOM.select_one("form#logoffForm > input")
     return tokenInput.attrs["value"] if tokenInput else ''
-
 
 def SearchGroupOne(pattern: str, text: str) -> str:
     expr = re.compile(pattern)
@@ -35,7 +33,6 @@ def SearchGroupOne(pattern: str, text: str) -> str:
         return searchResult.group(1)
     else:
         return ""
-
 
 def GetUser(client: Client) -> User:
     personalAccountResponse = client.get(Pages.personalAccount)
@@ -50,7 +47,6 @@ def GetUser(client: Client) -> User:
         r"ga\('set', 'userId', '(\d*)'\)", responseText)
     user.userId = int(searchResult) if len(searchResult) else -1
     return user
-
 
 def Authorize(client: Client,
               email: str,
@@ -68,7 +64,6 @@ def Authorize(client: Client,
     loginResponse.raise_for_status()
     del client.headers["__RequestVerificationToken"]
     return True
-
 
 def Logoff(client: Client) -> bool:
     mainPage = client.get(Pages.main)
