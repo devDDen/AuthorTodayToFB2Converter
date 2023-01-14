@@ -84,7 +84,7 @@ if __name__ == "__main__":
     t = time()
     if args.url_list:
         for url in args.url_list:
-            downloadBook(client, authorized, sub('http://|https://|author.today/', '', url), outputDir)
+            downloadBook(client, authorized, sub('(http://|https://)author\.today/(work|reader)', '', url), outputDir)
     elif (args.input_file):
         with open(args.input_file, 'r') as f:
             for line in f:
@@ -92,7 +92,7 @@ if __name__ == "__main__":
                 if url == '':
                     continue
                 try:
-                    downloadBook(client, authorized, sub('http://|https://|author.today/', '', url), outputDir)
+                    downloadBook(client, authorized, sub('(http://|https://)author\.today/(work|reader)', '', url), outputDir)
                 except Exception:
                     print(f"Fail to download {line}")
     if authorized:

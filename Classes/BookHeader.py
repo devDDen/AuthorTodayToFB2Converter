@@ -26,7 +26,7 @@ class BookHeader:
     def GetBookHeaderFromUrl(
         self, url: str, client: Client
     ) -> None:
-        bookPageResponse = client.get(url)
+        bookPageResponse = client.get(Pages.work + url)
         bookPageResponse.raise_for_status()
         DOM: BeautifulSoup = BeautifulSoup(
             bookPageResponse.text, "html.parser"

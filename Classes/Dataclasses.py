@@ -7,6 +7,7 @@ USERNAME = "<username>"
 @dataclass
 class Pages:
     main = "https://author.today"
+    work = "/work"
     login = "/account/login"
     logoff = "/account/logoff"
     personalAccount = "/account/my-page"
