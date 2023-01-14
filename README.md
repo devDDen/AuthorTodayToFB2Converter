@@ -1,14 +1,28 @@
 # AuthorTodayToFB2Converter
 
-Based on [Ae-Mc/AuthorTodayToFB2Converter](https://github.com/Ae-Mc/AuthorTodayToFB2Converter).
-Synchronous version.
+Основано на [Ae-Mc/AuthorTodayToFB2Converter](https://github.com/Ae-Mc/AuthorTodayToFB2Converter).
+Не асинхронная версия.
 
-Program to download and convert books from site [author.today](https://author.today) to fb2 format.
+Прогрмма для загрузки книг с сайта [author.today](https://author.today) и преобразования их в формат fb2.
+Можно загрузить любую книгу, доступную для чтения на сайте с указанным аккаунтом.
 
-## Usage
+## Использование
 
-Example of usage you can find in file [example.py](example.py).
+`python main.py -u url1 url2 ...`
 
-## Installation
+`python main.py -i file_with-url.txt`
 
-Clone this repo and run `pip install -r requirements.txt`
+### Авторизация
+Логин и пароль по умолчанию ищутся в каталоге PrivateConfig в файлах `email.txt` и `password.txt`.
+Указать другой каталог можно с помощью параметра `-c path_to_folder`.
+Также логин и пароль можно указать при запуске программы `-l login -p password`.
+Если файлов не существует или они пустые, и логин и пароль не указаны при запуске, то останется возможность загружать книги без авторизации.
+
+### Формат url
+В качестве url можно передавать полный адрес или /идентификатор_книги (в адресе идёт после /work или /reader).
+
+В файле адреса должны находится на разных строках.
+
+## Подготовка к запуску
+Установить python и pip.
+Склонировать репозиторий и запустить `pip install -r requirements.txt`
