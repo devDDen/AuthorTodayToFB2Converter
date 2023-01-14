@@ -39,6 +39,12 @@ if __name__ == "__main__":
         type=str,
         help='Path to the output folder',
     )
+    parser.add_argument(
+        '-v',
+        '--verbose',
+        default=False,
+        action="store_true"
+    )
     inputGroup.add_argument(
         '-u',
         '--url-list',
@@ -81,10 +87,16 @@ if __name__ == "__main__":
     else:
         print("You are not authorized")
 
+    url_regexp = '(http://|https://)author\.today/(work|reader)'
     t = time()
     if args.url_list:
         for url in args.url_list:
-            downloadBook(client, authorized, sub('(http://|https://)author\.today/(work|reader)', '', url), outputDir)
+            downloadBook(
+                client,
+                authorized,
+                sub(url_regexp, '', url),
+                outputDir,
+                args.verbose)
     elif (args.input_file):
         with open(args.input_file, 'r') as f:
             for line in f:
@@ -92,7 +104,12 @@ if __name__ == "__main__":
                 if url == '':
                     continue
                 try:
-                    downloadBook(client, authorized, sub('(http://|https://)author\.today/(work|reader)', '', url), outputDir)
+                    downloadBook(
+                        client,
+                        authorized,
+                        sub(url_regexp, '', url),
+                        outputDir,
+                        args.verbose)
                 except Exception:
                     print(f"Fail to download {line}")
     if authorized:

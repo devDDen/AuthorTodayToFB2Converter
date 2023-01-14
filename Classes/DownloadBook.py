@@ -9,17 +9,24 @@ from Classes.Book import Book
 from Classes.Functions import RemoveInvalidFilenameCharacters
 
 
-def downloadBook(client: Client, authorized: bool, url: str, outputDir: str):
+def downloadBook(
+        client: Client,
+        authorized: bool,
+        url: str,
+        outputDir: str,
+        verbose: bool,
+        ):
     book: Book = Book(client)
     book.GetBookFromUrl(authorized, url)
-    print(book.header)
-    print(
-        "-----------------\nTable of Contents\n-----------------",
-        end="\n",
-    )
-    for chapterHeader in book.header.tableOfContents:
-        print(chapterHeader)
-    print("End of book")
+    if verbose:
+        print(book.header)
+        print(
+            "-----------------\nTable of Contents\n-----------------",
+            end="\n",
+        )
+        for chapterHeader in book.header.tableOfContents:
+            print(chapterHeader)
+        print("End of book")
     fb2 = FictionBook2()
     fb2.titleInfo.title = book.header.title
     fb2.titleInfo.authors = cast(
